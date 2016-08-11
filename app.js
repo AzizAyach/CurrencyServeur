@@ -74,17 +74,18 @@ app.get('/',function(req,rsp){
 
 routes.get('/all',function(req,rsp) {
 
-  console.log(req);
+
   var Jsonarr = req.query.dev;
+  console.log(Jsonarr);
   var urls = [];
   var timeInMss = Date.now();
   var n = timeInMss / 1000;
   var time = Math.floor(n) - 15000;
   var data = '';
-
+  var erreur = [] ;
 
   if (typeof Jsonarr === 'undefined' || Jsonarr === null) {
-    // variable is undefined or null
+    rsp.send(erreur);
   }
   else{
     var arr = JSON.parse(Jsonarr);
@@ -141,9 +142,10 @@ routes.get('/byone',function(req,rsp) {
   var time = Math.floor(n) - 15000;
   var data = '';
   var arr = req.query.dev;
+  var erreur = []
   var url = 'http://webcharts.fxserver.com/charts/activeChartFeed.php?pair=' + arr + '&period=0&unit=&limit=80&timeout=' + time + '&rateType=bid&GMT=on';
   if (typeof arr === 'undefined' || arr === null) {
-    // variable is undefined or null
+    rsp.send(erreur);
   }
   else{
 
