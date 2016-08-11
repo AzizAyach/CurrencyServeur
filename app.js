@@ -73,6 +73,7 @@ app.get('/',function(req,rsp){
 
 
 routes.get('/all',function(req,rsp) {
+
   console.log(req);
   var Jsonarr = req.query.dev;
   var urls = [];
@@ -80,43 +81,55 @@ routes.get('/all',function(req,rsp) {
   var n = timeInMss / 1000;
   var time = Math.floor(n) - 15000;
   var data = '';
-  var arr = JSON.parse(Jsonarr);
-  for (var i = 0; i < arr.length; i++) {
-    var url = 'http://webcharts.fxserver.com/charts/activeChartFeed.php?pair=' + arr[i] + '&period=0&unit=&limit=80&timeout=' + time + '&rateType=bid&GMT=on';
-    urls.push(url);
+
+
+  if (typeof Jsonarr === 'undefined' || Jsonarr === null) {
+    // variable is undefined or null
   }
-  var red = [];
-  var completed_requests = 0;
-  for (i in urls) {
-    request(urls[i], function (error, response, html) {
-      var s = JSON.parse(html);
-      var json = { change : "", buy : "", sell : "",spread : "",stat : ""};
-      var candle = s.candles;
-      var data = candle.data;
-      var value = data[0];
-      json.change = s.pair ;
-      json.spread = s.spread;
-      json.buy = value.O;
-      json.sell = value.C;
-      var comp = data[2].O;
-      var diff = value.O - comp ;
-      console.log(diff);
-      if(diff>0){
-        json.stat = 0 ;
-      }
-      else{
-        json.stat = 1;
-      }
-      red.push(json);
-      completed_requests++;
-      if (completed_requests == urls.length) {
-        rsp.send(red);
-        
-      }
-    });
+  else{
+    var arr = JSON.parse(Jsonarr);
+
+    for (var i = 0; i < arr.length; i++) {
+      var url = 'http://webcharts.fxserver.com/charts/activeChartFeed.php?pair=' + arr[i] + '&period=0&unit=&limit=80&timeout=' + time + '&rateType=bid&GMT=on';
+      urls.push(url);
+    }
+    var red = [];
+    var completed_requests = 0;
+    for (i in urls) {
+      request(urls[i], function (error, response, html) {
+        var s = JSON.parse(html);
+        var json = { change : "", buy : "", sell : "",spread : "",stat : ""};
+        var candle = s.candles;
+        var data = candle.data;
+        var value = data[0];
+        json.change = s.pair ;
+        json.spread = s.spread;
+        json.buy = value.O;
+        json.sell = value.C;
+        var comp = data[2].O;
+        var diff = value.O - comp ;
+        console.log(diff);
+        if(diff>0){
+          json.stat = 0 ;
+        }
+        else{
+          json.stat = 1;
+        }
+        red.push(json);
+        completed_requests++;
+        if (completed_requests == urls.length) {
+          rsp.send(red);
+
+        }
+      });
+
+
+    }
 
 
   }
+
+
 })
 
 
@@ -127,8 +140,14 @@ routes.get('/byone',function(req,rsp) {
   var n = timeInMss / 1000;
   var time = Math.floor(n) - 15000;
   var data = '';
-  var arr = "EUR/USD";
-    var url = 'http://webcharts.fxserver.com/charts/activeChartFeed.php?pair=' + arr + '&period=0&unit=&limit=80&timeout=' + time + '&rateType=bid&GMT=on';
+  var arr = req.query.dev;
+  var url = 'http://webcharts.fxserver.com/charts/activeChartFeed.php?pair=' + arr + '&period=0&unit=&limit=80&timeout=' + time + '&rateType=bid&GMT=on';
+  if (typeof arr === 'undefined' || arr === null) {
+    // variable is undefined or null
+  }
+  else{
+
+
     request(url, function (error, response, html) {
       var s = JSON.parse(html);
       var json = { change : "", buy : "", sell : "",spread : "",stat : ""};
@@ -149,10 +168,17 @@ routes.get('/byone',function(req,rsp) {
       else{
         json.stat = 1;
       }
-        rsp.send(json);
+      rsp.send(json);
 
 
     });
+  }
+
+
+
+
+
+
 
 
 
