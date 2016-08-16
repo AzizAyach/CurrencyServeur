@@ -100,28 +100,37 @@ routes.get('/all',function(req,rsp) {
       request(urls[i], function (error, response, html) {
         var s = JSON.parse(html);
         var json = { change : "", buy : "", sell : "",spread : "",stat : ""};
-        var candle = s.candles;
-        var data = candle.data;
-        var value = data[0];
-        json.change = s.pair ;
-        json.spread = s.spread;
-        json.buy = value.O;
-        json.sell = value.C;
-        var comp = data[2].O;
-        var diff = value.O - comp ;
-        console.log(diff);
-        if(diff>0){
-          json.stat = 0 ;
-        }
-        else{
-          json.stat = 1;
-        }
-        red.push(json);
-        completed_requests++;
-        if (completed_requests == urls.length) {
-          rsp.send(red);
+       try{
+          var candle = s.candles;
+          var data = candle.data;
+          var value = data[0];
+          json.change = s.pair ;
+          json.spread = s.spread;
+          json.buy = value.O;
+          json.sell = value.C;
+          var comp = data[2].O;
+          var diff = value.O - comp ;
+          console.log(diff);
+          if(diff>0){
+            json.stat = 0 ;
+          }
+          else{
+            json.stat = 1;
+          }
+       }
+       catch (error){
 
-        }
+
+
+       }
+          red.push(json);
+          completed_requests++;
+          if (completed_requests == urls.length) {
+            rsp.send(red);
+
+          }
+
+
       });
 
 
@@ -153,6 +162,7 @@ routes.get('/byone',function(req,rsp) {
     request(url, function (error, response, html) {
       var s = JSON.parse(html);
       var json = { change : "", buy : "", sell : "",spread : "",stat : ""};
+      try{
       var candle = s.candles;
       var data = candle.data;
       var value = data[0];
@@ -169,6 +179,11 @@ routes.get('/byone',function(req,rsp) {
       }
       else{
         json.stat = 1;
+      }
+      }
+      catch (error){
+
+        
       }
       rsp.send(json);
 
