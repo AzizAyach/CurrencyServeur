@@ -315,7 +315,7 @@ routes.get('/getchart',function(req,rsp){
     }, function(err, results) {
 
         if (!err) {
-            rsp.send(results);
+            rsp.send(JSON.stringify(results));
             console.log(results);
             for (var i = 0; i < results.length; i++) {
                 // do something with results[i]
@@ -339,8 +339,6 @@ var port = Number (process.env.PORT || 3000)
 app.listen(port, function(){
  
 });
-
-
 
 
 
