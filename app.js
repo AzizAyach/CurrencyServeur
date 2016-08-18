@@ -300,13 +300,15 @@ routes.get('/getchart',function(req,rsp){
             urls.push(url);
         }
     }
-
+    var red = [];
     async.map(urls, function(url, callback) {
         // iterator function
         request(url, function (error, response, body) {
             if (!error && response.statusCode == 200) {
                 var s = JSON.parse(body);
 
+
+                 red.push(JSON.stringify(s));
                 callback(null, body);
             } else {
                 callback(error || response.statusCode);
@@ -315,7 +317,7 @@ routes.get('/getchart',function(req,rsp){
     }, function(err, results) {
 
         if (!err) {
-            rsp.send(JSON.stringify(results));
+            rsp.send(red);
             console.log(results);
             for (var i = 0; i < results.length; i++) {
                 // do something with results[i]
